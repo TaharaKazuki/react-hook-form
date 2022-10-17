@@ -1,7 +1,9 @@
 // index.tsx
 import { FC } from 'react';
+import { yupResolver } from '@hookform/resolvers/yup';
 import Head from 'next/head';
 import { useForm, SubmitHandler } from 'react-hook-form';
+import * as yup from 'yup';
 import styles from '../styles/Home.module.css';
 
 interface IFormInputs {
@@ -9,13 +11,20 @@ interface IFormInputs {
   password: string;
 }
 
+const schema = yup.object().shape({
+  email: yup.string().email().required(),
+  password: yup.string().min(4).max(20).required(),
+});
+
 const Home: FC = () => {
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<IFormInputs>();
+  } = useForm<IFormInputs>({
+    resolver: yupResolver(schema),
+  });
 
   const formSubmitHandler: SubmitHandler<IFormInputs> = (data: IFormInputs) => {
     console.info('form data is', data);
@@ -33,9 +42,9 @@ const Home: FC = () => {
           <input defaultValue="example@test.com" {...register('email')} />
           <br />
           <br />
-          <input {...register('password', { required: true })} />
+          <input {...register('password')} />
           <br />
-          {errors.password && <span>This field is required</span>}
+          {errors.password && errors.password?.message && <span>{errors.password.message}</span>}
           <br />
           <input type="submit" />
         </form>
