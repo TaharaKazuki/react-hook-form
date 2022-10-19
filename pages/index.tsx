@@ -1,8 +1,9 @@
 // index.tsx
 import { FC } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { TextField } from '@material-ui/core';
 import Head from 'next/head';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import styles from '../styles/Home.module.css';
 
@@ -19,6 +20,7 @@ const schema = yup.object().shape({
 const Home: FC = () => {
   const {
     register,
+    control,
     handleSubmit,
     watch,
     formState: { errors },
@@ -39,10 +41,38 @@ const Home: FC = () => {
 
       <main className={styles.main}>
         <form onSubmit={handleSubmit(formSubmitHandler)}>
-          <input defaultValue="example@test.com" {...register('email')} />
+          <Controller
+            name="email"
+            control={control}
+            defaultValue="example@leo.test.com"
+            render={({ field }) => (
+              <TextField
+                {...field}
+                type="email"
+                label="Email"
+                variant="outlined"
+                error={!!errors.email}
+                helperText={errors.email ? errors.email?.message : ''}
+              />
+            )}
+          />
+
           <br />
           <br />
-          <input {...register('password')} />
+          <Controller
+            name="password"
+            control={control}
+            defaultValue="example@leo.test.com"
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Password"
+                variant="outlined"
+                error={!!errors.password}
+                helperText={errors.password ? errors.password?.message : ''}
+              />
+            )}
+          />
           <br />
           {errors.password && errors.password?.message && <span>{errors.password.message}</span>}
           <br />
